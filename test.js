@@ -1,4 +1,5 @@
 import getCommonPrefix from './getCommonPrefix.mjs';
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 const suite = [
 	//#00
@@ -159,7 +160,6 @@ const suite = [
 ];
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 const passed = Object.create(null);
 const failed = Object.create(null);
 
@@ -168,17 +168,23 @@ const total = new Map([
 	[failed, 0],
 ]);
 
+// prettier-ignore
 suite.forEach((test, index) => {
 	const [a, b] = test.arg;
-	const result = getCommonPrefix(a, b);
-	const e = test.expected !== result ? failed : passed;
+	const result = getCommonSuffix(a, b);
+	// noinspection CommaExpressionJS
+    const e = test.expected !== result ? (test.result = result, failed) : passed;
 	e[index] = test;
 	const n = total.get(e);
 	total.set(e, 1 + n);
 });
 
 const totalFailed = total.get(failed);
+const somePassed = totalFailed !== suite.length;
 if (totalFailed) {
-	console.log('%d failed:\n%O', totalFailed, failed);
+	console.log('%s failed:\n%O', somePassed ? totalFailed : 'All', failed);
 }
-console.log('%d passed:\n%O', total.get(passed), passed);
+if (somePassed) {
+    console.log('%d passed:\n%O', total.get(passed), passed);
+}
+
